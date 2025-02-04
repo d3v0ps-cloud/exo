@@ -32,7 +32,7 @@ COPY . .
 RUN if [ -z "$NODE_ID" ]; then export NODE_ID=$(uuidgen); fi
 
 # Run command
-CMD ["python3", "main.py", "--disable-tui", "--node-id", "$NODE_ID"]
+CMD ["python3", "exo/main.py", "--disable-tui", "--node-id", "$NODE_ID"]
 
 # Expose port
 EXPOSE $WORKING_PORT
