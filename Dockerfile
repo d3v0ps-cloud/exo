@@ -16,7 +16,7 @@ WORKDIR /app
 ENV PATH=/usr/local/python3.12/bin:$PATH
 
 # Set pipefail
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+# SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Install dependencies and setup python3.12
 RUN apt-get update -y && \
