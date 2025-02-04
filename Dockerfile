@@ -12,14 +12,13 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Set working directory
 WORKDIR /app
 
-# Set environment variables
-ENV PATH=/usr/local/python3.12/bin:$PATH
-
-# Set pipefail
+# Set pipefail and enable error reporting
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+ENV PYTHONUNBUFFERED=1
 
 # Install dependencies
-RUN apt-get update -y && \
+RUN set -x && \
+    apt-get update -y && \
     apt-get install --no-install-recommends -y \
     git \
     gnupg \
@@ -30,20 +29,27 @@ RUN apt-get update -y && \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup Python 3.12
-RUN apt-get update -y && \
+RUN set -x && \
+    apt-get update -y && \
     add-apt-repository -y ppa:deadsnakes/ppa && \
     apt-get update -y && \
-    apt-get install --no-install-recommends -y python3.12 python3.12-dev python3.12-distutils && \
-    apt-get remove -y python3 python3-dev || true && \
+    apt-get install --no-install-recommends -y \
+    python3.12-minimal \
+    python3.12-dev \
+    python3.12-distutils \
+    python3.12-venv \
+    python3.12-lib2to3 \
+    && apt-get remove -y python3 python3-dev || true && \
     apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    python3.12 -V
 
-# Verify Python installation and install pip
-RUN which python3.12 && \
-    python3.12 --version && \
+# Install pip
+RUN set -x && \
     curl -sS https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
-    /usr/bin/python3.12 get-pip.py && \
-    rm get-pip.py
+    python3.12 get-pip.py && \
+    rm get-pip.py && \
+    python3.12 -m pip --version
 
 # Link python3.12 to python3 and pip3
 RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1 && \
