@@ -18,12 +18,23 @@ ENV PATH=/usr/local/python3.12/bin:$PATH
 # Set pipefail
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-# Install dependencies and setup python3.12
+# Install dependencies
 RUN apt-get update -y && \
-    apt-get install --no-install-recommends -y git gnupg build-essential software-properties-common curl && \
+    apt-get install --no-install-recommends -y \
+    git \
+    gnupg \
+    build-essential \
+    software-properties-common \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Setup Python 3.12
+RUN apt-get update -y && \
     add-apt-repository -y ppa:deadsnakes/ppa && \
-    apt-get remove -y python3 python3-dev && \
+    apt-get update -y && \
     apt-get install --no-install-recommends -y python3.12 python3.12-dev python3.12-distutils && \
+    apt-get remove -y python3 python3-dev || true && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
 
