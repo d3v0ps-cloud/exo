@@ -16,7 +16,7 @@ WORKDIR /app
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV PYTHONUNBUFFERED=1
 
-# Install dependencies
+# Install dependencies and Python 3.12
 RUN set -x && \
     apt-get update -y && \
     apt-get install --no-install-recommends -y \
@@ -26,23 +26,21 @@ RUN set -x && \
     software-properties-common \
     curl \
     ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
-
-# Setup Python 3.12
-RUN set -x && \
-    apt-get update -y && \
-    add-apt-repository -y ppa:deadsnakes/ppa && \
-    apt-get update -y && \
-    apt-get install --no-install-recommends -y \
+    && apt-get update -y \
+    && mkdir -p /etc/apt/keyrings \
+    && curl -fsSL https://download.deadsnakes.com/key.gpg -o /etc/apt/keyrings/deadsnakes.gpg \
+    && echo "deb [signed-by=/etc/apt/keyrings/deadsnakes.gpg] https://ppa.deadsnakes.com/ubuntu jammy main" > /etc/apt/sources.list.d/deadsnakes.list \
+    && apt-get update -y \
+    && apt-get install --no-install-recommends -y \
     python3.12-minimal \
     python3.12-dev \
     python3.12-distutils \
     python3.12-venv \
     python3.12-lib2to3 \
-    && apt-get remove -y python3 python3-dev || true && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/* && \
-    python3.12 -V
+    && apt-get remove -y python3 python3-dev || true \
+    && apt-get autoremove -y \
+    && rm -rf /var/lib/apt/lists/* \
+    && python3.12 -V
 
 # Install pip
 RUN set -x && \
