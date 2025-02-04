@@ -38,12 +38,16 @@ RUN apt-get update -y && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
 
-# Install pip
-RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12
+# Verify Python installation and install pip
+RUN which python3.12 && \
+    python3.12 --version && \
+    curl -sS https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+    /usr/bin/python3.12 get-pip.py && \
+    rm get-pip.py
 
 # Link python3.12 to python3 and pip3
-RUN ln -s /usr/bin/python3.12 /usr/bin/python3 && \
-    ln -s /usr/bin/pip3.12 /usr/bin/pip3
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1 && \
+    update-alternatives --install /usr/bin/pip3 pip3 /usr/local/bin/pip3 1
 
 # Copy installation files
 COPY setup.py .
