@@ -1,56 +1,37 @@
-# nvidia: --build-arg BASE_IMAGE=nvidia/cuda:12.5.1-cudnn-runtime-ubuntu22.04
-# ARG BASE_IMAGE=ubuntu:jammy-20240911.1
-ARG BASE_IMAGE=nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
+FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
 
-# Base image
-FROM $BASE_IMAGE
+RUN apt-get update && apt-get install -y \
+    software-properties-common \
+    build-essential \
+    pkg-config \
+    cmake \
+    libopenblas-dev \
+    liblapack-dev \
+    liblapacke-dev \
+    python3-pip \
+    curl \
+    git
 
-# Set environment variables
-ENV WORKING_PORT=8080
-ENV DEBUG=1
-ENV DEBIAN_FRONTEND=noninteractive
+# RUN git clone https://github.com/ml-explore/mlx.git && cd mlx && mkdir -p build && cd build && \
+#     cmake .. \
+#       -DCMAKE_PREFIX_PATH="/usr/lib/aarch64-linux-gnu" \
+#       -DLAPACK_LIBRARIES="/usr/lib/aarch64-linux-gnu/liblapack.so" \
+#       -DBLAS_LIBRARIES="/usr/lib/aarch64-linux-gnu/libopenblas.so" \
+#       -DLAPACK_INCLUDE_DIRS="/usr/include" && \
+#     sed -i 's/option(MLX_BUILD_METAL "Build metal backend" ON)/option(MLX_BUILD_METAL "Build metal backend" OFF)/' ../CMakeLists.txt && \
+#     make -j && \
+#     make install && \
+#     cd .. && \
+#     pip install --no-cache-dir .
 
-# Set working directory
-WORKDIR /app
-
-# Set environment variables
-ENV PATH=/usr/local/python3.12/bin:$PATH
-
-# Set pipefail
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-
-# Install dependencies and setup python3.12
-RUN apt-get update -y && \
-    apt-get install --no-install-recommends -y git gnupg build-essential software-properties-common curl && \
-    add-apt-repository -y ppa:deadsnakes/ppa && \
-    apt-get remove -y python3 python3-dev && \
-    apt-get install --no-install-recommends -y python3.12 python3.12-dev && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install pip
-RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12
-
-# Link python3.12 to python3 and pip3
-RUN ln -s /usr/bin/python3.12 /usr/bin/python3 && \
-    ln -s /usr/bin/pip3.12 /usr/bin/pip3
-
-# Copy installation files
 COPY setup.py .
+COPY exo ./exo
 
-# Install exo
-RUN pip3 install --no-cache-dir . && \
-    pip3 cache purge
+# RUN sed -i '/mlx==/d' setup.py && \
+#     pip install --no-cache-dir .
+RUN pip install --no-cache-dir .
 
-# Copy source code
-# TODO: Change this to copy only the necessary files
-COPY . .
+# RUN pip install --no-cache-dir --no-deps mlx-lm==0.18.2
 
-# either use ENV NODE_ID or generate a random node id
-RUN if [ -z "$NODE_ID" ]; then export NODE_ID=$(uuidgen); fi
-
-# Run command
-CMD ["python3", "main.py", "--disable-tui", "--node-id", "$NODE_ID"]
-
-# Expose port
-EXPOSE $WORKING_PORT
+# CMD ["exo", "--inference-engine", "mlx"]
+ENTRYPOINT ["exo"]
