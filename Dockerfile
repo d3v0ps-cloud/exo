@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y \
     liblapacke-dev \
     python3-pip \
     curl \
-    git
+    git \
+    libgl1-mesa-glx
 
 # RUN git clone https://github.com/ml-explore/mlx.git && cd mlx && mkdir -p build && cd build && \
 #     cmake .. \
