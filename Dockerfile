@@ -20,7 +20,7 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Upgrade pip and install dependencies
-RUN pip install --no-cache-dir -U pip setuptools wheel
+RUN pip install --no-cache-dir -U pip setuptools wheel torch
 RUN pip install --no-cache-dir -e .
 
 # Set the entrypoint
