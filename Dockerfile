@@ -24,7 +24,7 @@ RUN apt-get update -y && \
     apt-get install --no-install-recommends -y git gnupg build-essential software-properties-common curl && \
     add-apt-repository -y ppa:deadsnakes/ppa && \
     apt-get remove -y python3 python3-dev && \
-    apt-get install --no-install-recommends -y python3.12 python3.12-dev python3.12-distutils && \
+    apt-get install --no-install-recommends -y python3.12 python3.12-dev && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
 
