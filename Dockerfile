@@ -3,7 +3,7 @@ FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Set environment variables
-ENV PATH=/usr/local/python3.12/bin:$PATH
+# ENV PATH=/usr/local/python3.12/bin:$PATH
 
 # Add deadsnakes PPA for Python 3.12
 RUN apt-get update && apt-get install -y software-properties-common && \
