@@ -20,6 +20,12 @@ COPY . .
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
+ENV DEBUG=1
+ENV CLANG=0
+ENV CUDA=1
+ENV NV=1
+ENV GPU=1
+
 # Upgrade pip and install dependencies
 RUN pip install --no-cache-dir -U pip setuptools wheel torch llvmlite
 RUN pip install --no-cache-dir -e .
