@@ -23,7 +23,9 @@ RUN apt-get install -y \
     liblapacke-dev \
     curl \
     git \
-    libgl1-mesa-glx && \
+    libgl1-mesa-glx \
+    python3-cffi \
+    libffi-dev && \
     rm -rf /usr/bin/python3 && \
     ln -s /usr/bin/python3.12 /usr/bin/python3 && \
     ln -s /usr/bin/python3.12 /usr/bin/python && \
