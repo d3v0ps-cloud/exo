@@ -1,17 +1,34 @@
 FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
 
-RUN apt-get update && apt-get install -y \
-    software-properties-common \
+# Add deadsnakes PPA for Python 3.12
+RUN apt-get update && apt-get install -y software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update
+
+# Install Python 3.12 and remove other Python versions
+RUN apt-get install -y \
+    python3.12 \
+    python3.12-dev \
+    python3.12-venv \
+    python3.12-distutils \
     build-essential \
     pkg-config \
     cmake \
     libopenblas-dev \
     liblapack-dev \
     liblapacke-dev \
-    python3-pip \
     curl \
     git \
-    libgl1-mesa-glx
+    libgl1-mesa-glx && \
+    rm -rf /usr/bin/python3 && \
+    ln -s /usr/bin/python3.12 /usr/bin/python3 && \
+    ln -s /usr/bin/python3.12 /usr/bin/python && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install pip for Python 3.12
+RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12 && \
+    rm -f get-pip.py
 
 # RUN git clone https://github.com/ml-explore/mlx.git && cd mlx && mkdir -p build && cd build && \
 #     cmake .. \
@@ -33,4 +50,4 @@ RUN sed -i '/nvidia-ml-py==/d' setup.py && \
 
 # RUN pip install --no-cache-dir --no-deps mlx-lm==0.18.2
 
-CMD ["exo", "--inference-engine", "tinygrad"]
+CMD ["exo", "--inference-engine", "tinygrad", "--disable-tui"]
