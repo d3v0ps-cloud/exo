@@ -1,6 +1,6 @@
 # nvidia: --build-arg BASE_IMAGE=nvidia/cuda:12.5.1-cudnn-runtime-ubuntu22.04
 # ARG BASE_IMAGE=ubuntu:jammy-20240911.1
-ARG BASE_IMAGE=nvidia/cuda:12.5.1-cudnn-runtime-ubuntu22.04
+ARG BASE_IMAGE=nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
 
 # Base image
 FROM $BASE_IMAGE
