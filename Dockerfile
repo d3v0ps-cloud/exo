@@ -35,4 +35,4 @@ RUN pip install --no-cache-dir .
 # RUN pip install --no-cache-dir --no-deps mlx-lm==0.18.2
 
 # CMD ["exo", "--inference-engine", "mlx"]
-ENTRYPOINT ["exo"]
+CMD ["exo"]
