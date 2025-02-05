@@ -10,7 +10,6 @@ RUN apt-get install -y \
     python3.12 \
     python3.12-dev \
     python3.12-venv \
-    python3.12-distutils \
     build-essential \
     pkg-config \
     cmake \
