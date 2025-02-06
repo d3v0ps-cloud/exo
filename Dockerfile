@@ -10,57 +10,29 @@ ENV LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
 # Set environment variables
 # ENV PATH=/usr/local/python3.12/bin:$PATH
 
-# Add deadsnakes PPA for Python 3.12
-RUN apt-get update && apt-get install -y software-properties-common && \
-    add-apt-repository ppa:deadsnakes/ppa && \
-    apt-get update
-
-# Install system dependencies one by one for better error visibility
-RUN apt-get update
-
-# Install Python 3.12 and core dependencies
-RUN apt-get install -y python3.12 \
-    python3.12-dev \
-    python3.12-venv \
-    python3.12-full \
-    python3.12-lib \
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-dev \
+    python3-venv \
     python3-pip \
     python3-setuptools \
     python3-wheel \
-    python3-ensurepip
-
-# Install build tools
-RUN apt-get install -y build-essential \
+    build-essential \
     pkg-config \
     cmake \
     gcc \
-    make
-
-# Install library dependencies
-RUN apt-get install -y libopenblas-dev \
+    make \
+    libopenblas-dev \
     liblapack-dev \
     liblapacke-dev \
     libssl-dev \
     libffi-dev \
-    libpython3.12-dev
-
-# Install Python package dependencies
-RUN apt-get install -y python3-dev \
     python3-cffi \
-    python3-cryptography
-
-# Install other utilities
-RUN apt-get install -y curl
-RUN apt-get install -y git
-RUN apt-get install -y libgl1-mesa-glx
-
-# Configure Python symlinks
-RUN rm -rf /usr/bin/python3 && \
-    ln -s /usr/bin/python3.12 /usr/bin/python3 && \
-    ln -s /usr/bin/python3.12 /usr/bin/python
-
-# Clean up
-RUN apt-get clean && \
+    python3-cryptography \
+    curl \
+    git \
+    libgl1-mesa-glx && \
     rm -rf /var/lib/apt/lists/*
 
 # Install CUDA development packages
@@ -74,7 +46,6 @@ RUN apt-get update && \
 
 # Verify Python installation and install pip
 RUN python3 --version && \
-    python3 -c "import sys; assert sys.version_info >= (3, 12)" && \
     curl -sS https://bootstrap.pypa.io/get-pip.py | python3 && \
     rm -f get-pip.py && \
     python3 -m pip --version
