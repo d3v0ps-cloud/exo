@@ -65,28 +65,14 @@ RUN python3 --version && \
 COPY setup.py .
 COPY exo ./exo
 
-# Install Python package dependencies one by one for better error visibility
-RUN pip install --no-cache-dir --upgrade pip
-
-# Install build and setup tools first
-RUN pip install --no-cache-dir wheel
-RUN pip install --no-cache-dir setuptools
-RUN pip install --no-cache-dir distutils-extra
-
-# Install core dependencies with all necessary build tools
-RUN pip install --no-cache-dir --no-binary :all: cffi
-RUN pip install --no-cache-dir --no-binary :all: pycparser
-RUN pip install --no-cache-dir --no-binary :all: cryptography
-
-# Ensure scapy installs with all dependencies
-RUN pip install --no-cache-dir 'setuptools>=65.5.1'
-RUN pip install --no-cache-dir scapy==2.6.1
-
-# Install remaining packages
-RUN pip install --no-cache-dir nvidia-ml-py==12.560.30
-
-# Install the package itself with verbose output and ignore installed
-RUN pip install --no-cache-dir --ignore-installed -v .
+# Upgrade pip and install dependencies
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir wheel setuptools && \
+    pip install --no-cache-dir --no-binary :all: cffi pycparser cryptography && \
+    pip install --no-cache-dir 'setuptools>=65.5.1' && \
+    pip install --no-cache-dir scapy==2.6.1 && \
+    pip install --no-cache-dir nvidia-ml-py==12.560.30 && \
+    pip install --no-cache-dir --ignore-installed -v .
 
 # RUN pip install --no-cache-dir --no-deps mlx-lm==0.18.2
 
