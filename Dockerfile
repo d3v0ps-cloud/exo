@@ -53,6 +53,7 @@ COPY exo ./exo
 
 # Install base dependencies first
 RUN pip install --no-cache-dir cffi && \
+    pip install --no-cache-dir cryptography && \
     pip install --no-cache-dir nvidia-ml-py==12.560.30 && \
     pip install --no-cache-dir .
 
