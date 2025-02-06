@@ -2,6 +2,11 @@ FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Set CUDA environment variables for runtime
+ENV CUDA_HOME=/usr/local/cuda
+ENV PATH=${CUDA_HOME}/bin:${PATH}
+ENV LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
+
 # Set environment variables
 # ENV PATH=/usr/local/python3.12/bin:$PATH
 
@@ -31,6 +36,14 @@ RUN apt-get install -y \
     ln -s /usr/bin/python3.12 /usr/bin/python && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+# Install CUDA development packages needed for building
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    cuda-command-line-tools-12-4 \
+    cuda-compiler-12-4 \
+    cuda-cudart-dev-12-4 \
+    cuda-nvcc-12-4 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install pip for Python 3.12
 RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12 && \
