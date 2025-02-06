@@ -15,38 +15,59 @@ RUN apt-get update && apt-get install -y software-properties-common && \
     add-apt-repository ppa:deadsnakes/ppa && \
     apt-get update
 
-# Install Python 3.12 and dependencies
-RUN apt-get install -y \
-    python3.12 \
-    python3.12-dev \
-    python3.12-venv \
-    build-essential \
-    pkg-config \
-    cmake \
-    libopenblas-dev \
-    liblapack-dev \
-    liblapacke-dev \
-    curl \
-    git \
-    libgl1-mesa-glx \
-    python3-cffi \
-    libffi-dev \
-    libssl-dev \
-    libpython3.12-dev \
-    python3.12-distutils && \
-    rm -rf /usr/bin/python3 && \
+# Install system dependencies one by one for better error visibility
+RUN apt-get update
+
+# Install Python 3.12
+RUN apt-get install -y python3.12
+RUN apt-get install -y python3.12-dev
+RUN apt-get install -y python3.12-venv
+RUN apt-get install -y python3.12-distutils
+
+# Install build dependencies
+RUN apt-get install -y build-essential
+RUN apt-get install -y pkg-config
+RUN apt-get install -y cmake
+
+# Install library dependencies
+RUN apt-get install -y libopenblas-dev
+RUN apt-get install -y liblapack-dev
+RUN apt-get install -y liblapacke-dev
+RUN apt-get install -y libssl-dev
+RUN apt-get install -y libffi-dev
+RUN apt-get install -y libpython3.12-dev
+
+# Install other utilities
+RUN apt-get install -y curl
+RUN apt-get install -y git
+RUN apt-get install -y libgl1-mesa-glx
+RUN apt-get install -y python3-cffi
+
+# Configure Python symlinks
+RUN rm -rf /usr/bin/python3 && \
     ln -s /usr/bin/python3.12 /usr/bin/python3 && \
-    ln -s /usr/bin/python3.12 /usr/bin/python && \
-    apt-get clean && \
+    ln -s /usr/bin/python3.12 /usr/bin/python
+
+# Clean up
+RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install CUDA development packages needed for building
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    cuda-command-line-tools-12-4 \
-    cuda-compiler-12-4 \
-    cuda-cudart-dev-12-4 \
-    cuda-nvcc-12-4 \
-    && rm -rf /var/lib/apt/lists/*
+# Install CUDA development packages one by one
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends cuda-command-line-tools-12-4 && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends cuda-compiler-12-4 && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends cuda-cudart-dev-12-4 && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends cuda-nvcc-12-4 && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install pip for Python 3.12
 RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12 && \
