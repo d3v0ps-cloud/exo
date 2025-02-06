@@ -22,7 +22,6 @@ RUN apt-get update
 RUN apt-get install -y python3.12
 RUN apt-get install -y python3.12-dev
 RUN apt-get install -y python3.12-venv
-RUN apt-get install -y python3.12-distutils
 
 # Install build dependencies
 RUN apt-get install -y build-essential
