@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y software-properties-common && \
     add-apt-repository ppa:deadsnakes/ppa && \
     apt-get update
 
-# Install Python 3.12 and remove other Python versions
+# Install Python 3.12 and dependencies
 RUN apt-get install -y \
     python3.12 \
     python3.12-dev \
@@ -30,7 +30,10 @@ RUN apt-get install -y \
     git \
     libgl1-mesa-glx \
     python3-cffi \
-    libffi-dev && \
+    libffi-dev \
+    libssl-dev \
+    libpython3.12-dev \
+    python3.12-distutils && \
     rm -rf /usr/bin/python3 && \
     ln -s /usr/bin/python3.12 /usr/bin/python3 && \
     ln -s /usr/bin/python3.12 /usr/bin/python && \
@@ -64,17 +67,20 @@ RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12 && \
 COPY setup.py .
 COPY exo ./exo
 
-# Install base dependencies first
-RUN pip install --no-cache-dir wheel && \
-    pip install --no-cache-dir setuptools && \
-    pip install --no-cache-dir cffi && \
-    pip install --no-cache-dir python-dev-tools && \
-    pip install --no-cache-dir cryptography && \
-    pip install --no-cache-dir nvidia-ml-py==12.560.30 && \
-    # Ensure CFFI is properly installed with its backend
-    pip uninstall -y cffi && \
-    pip install --no-cache-dir --no-binary :all: cffi && \
-    pip install --no-cache-dir .
+# Install Python package dependencies one by one for better error visibility
+RUN pip install --no-cache-dir --upgrade pip
+
+RUN pip install --no-cache-dir wheel setuptools
+
+# Install CFFI and Cryptography with required dependencies
+RUN pip install --no-cache-dir --no-binary :all: cffi
+
+RUN pip install --no-cache-dir --no-binary :all: cryptography
+
+RUN pip install --no-cache-dir nvidia-ml-py==12.560.30
+
+# Install the package itself
+RUN pip install --no-cache-dir -v .
 
 # RUN pip install --no-cache-dir --no-deps mlx-lm==0.18.2
 
