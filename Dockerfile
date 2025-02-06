@@ -51,7 +51,9 @@ RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12 && \
 COPY setup.py .
 COPY exo ./exo
 
-RUN sed -i '/nvidia-ml-py==/d' setup.py && \
+# Install base dependencies first
+RUN pip install --no-cache-dir cffi && \
+    pip install --no-cache-dir nvidia-ml-py==12.560.30 && \
     pip install --no-cache-dir .
 
 # RUN pip install --no-cache-dir --no-deps mlx-lm==0.18.2
