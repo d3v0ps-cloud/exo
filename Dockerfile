@@ -65,9 +65,15 @@ COPY setup.py .
 COPY exo ./exo
 
 # Install base dependencies first
-RUN pip install --no-cache-dir cffi && \
+RUN pip install --no-cache-dir wheel && \
+    pip install --no-cache-dir setuptools && \
+    pip install --no-cache-dir cffi && \
+    pip install --no-cache-dir python-dev-tools && \
     pip install --no-cache-dir cryptography && \
     pip install --no-cache-dir nvidia-ml-py==12.560.30 && \
+    # Ensure CFFI is properly installed with its backend
+    pip uninstall -y cffi && \
+    pip install --no-cache-dir --no-binary :all: cffi && \
     pip install --no-cache-dir .
 
 # RUN pip install --no-cache-dir --no-deps mlx-lm==0.18.2
